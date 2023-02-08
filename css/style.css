@@ -47,6 +47,7 @@ body {
 .carouselSide {
     width: 20%;
     height: 50vh;
+    max-height: 500px;
     min-height: 380px;
     display: grid;
     grid-template-columns: 1fr;
@@ -129,11 +130,12 @@ body {
 @media screen and (max-width: 800px) {
     
     .carousel {
+        margin-top: 2rem;
         height: fit-content;
         min-height: 1px;
         max-height: none;
         width: 90%;
-        max-width: 400px;
+        max-width: 7680px;
     }
     .carouselMain {
         width: 100%;
