@@ -1,7 +1,7 @@
 /**
 * Js-Array-Objects-Carousel
 * @author   Alessandro Montenero
-* @description carosello basato su un array di oggetti
+* @description carosello basato su un array di oggetti 
 */
 
 /* array of images */
