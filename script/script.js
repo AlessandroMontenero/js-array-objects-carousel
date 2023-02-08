@@ -4,12 +4,7 @@
 * @description carosello basato su un array di oggetti
 */
 
-/**
- * @const {array} images
- * @description array of objects
- * @returns {object} return object with imagePath, title and text
- */
-
+/* array of images */
 const images = [
     {
         image: 'img/01.webp',
@@ -34,103 +29,152 @@ const images = [
     }
 ]
 
+/******************************+*
+ * Carousel Preview Side  
+*******************************+*/
+
+/* Preview Container ID */
 let prevContainer = document.getElementById("carouselSide")
 
+/* Insert a PrevBox HTML El for each image in images array*/
 images.forEach((img, i) => prevContainer.innerHTML += '<div class="prevBox" id="'+ i +'"><img src="./' + img.image + '" class="prevImg" alt=""></div>')
 
-prevBoxes = document.querySelectorAll(".prevBox")
+/* Insert all created PrevBox in a prevBoxes array */
+let prevBoxes = document.querySelectorAll(".prevBox")
 
-let prevItems = document.getElementsByClassName("prevBox")
+/* Function to select a PrevBox onclick */
+prevBoxes.forEach((box) => box.onclick = function(){
+    /* Remove active from last selected item */
+    prevBoxes[carouselSelectedItem].classList.remove("active")
+    /* Set this box as new selected item */
+    carouselSelectedItem = this.id
+    /* Set this box img as main */
+    carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" class="mainImg" alt=""><div class="mainDescr"><h4>' + images[carouselSelectedItem].title + '</h4><h5>' + images[carouselSelectedItem].text + '</h5></div>'
+    /* Set this box as active */
+    prevBoxes[carouselSelectedItem].classList.add("active")
+        removeOtherBoxesActive()
+        clearAndRestartInterval()
+    })
 
-/* Selected item */
 
-let carouselMain = document.getElementById("carouselMain")
-let carouselSelectedItem = 0
+/******************************+*
+ * Carousel Main Side 
+*******************************+*/
+
+let carouselMain = document.getElementById("carouselMain")  /* Carousel Main ID */
+
+let carouselSelectedItem = 0            /* Carousel Auto Scroll index */
+
+/* Insert the first image */
 carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" class="mainImg" alt=""><div class="mainDescr"><h4>' + images[carouselSelectedItem].title + '</h4><h5>' + images[carouselSelectedItem].text + '</h5></div>'
-prevItems[0].classList.add("active")
+prevBoxes[0].classList.add("active")
 
+/* Start Carousel Timer and set Pause var false*/
 let carouselInterval = setInterval(carouselTimer, 3000)
 let carouselPause = false
 
+/* Carousel Timer function */
+function carouselTimer() {
+    /* Increase index while smaller than number of boxes */
+    if (carouselSelectedItem < (prevBoxes.length - 1)){
+        carouselSelectedItem ++
+        prevBoxes[carouselSelectedItem].classList.add("active")
+        removeOtherBoxesActive()
+    }
+    /* Than restart index */
+    else {
+        carouselSelectedItem = 0
+        prevBoxes[4].classList.remove("active")
+        prevBoxes[carouselSelectedItem].classList.add("active")
+    }
+    carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" class="mainImg" alt=""><div class="mainDescr"><h4>' + images[carouselSelectedItem].title + '</h4><h5>' + images[carouselSelectedItem].text + '</h5></div>'
+}
+
+
+/* Remove class active from all boxes except the current selected one */
+function removeOtherBoxesActive(){
+    for (let i = 0; i < (prevBoxes.length - 1) && i != carouselSelectedItem; i++) {
+        prevBoxes[i].classList.remove("active")
+    }
+} 
+
+/* Pause and Restart Interval */
+function clearAndRestartInterval() {
+    if (carouselPause == false) {
+        clearInterval(carouselInterval)
+        carouselInterval = setInterval(carouselTimer, 3000)
+    }
+}
+
+/******************************+*
+ * Carousel Buttons 
+*******************************+*/
+
+/* Left Arrow onclick*/
 document.getElementById("carouselArrowLeft").onclick = function(){
-    prevItems[carouselSelectedItem].classList.remove("active")
+    /* deselect current box*/
+    prevBoxes[carouselSelectedItem].classList.remove("active")
+    /* condition for cycle from first to last*/
     if (carouselSelectedItem == 0) {
         carouselSelectedItem = 4
     }
     else {
         carouselSelectedItem -= 1
     }
-    prevItems[carouselSelectedItem].classList.add("active")
-    for (let i = 0; i < prevBoxes.length && i != carouselSelectedItem; i++) {
-        prevBoxes[i].classList.remove("active")
-    }
+    /* select last box */
+    prevBoxes[carouselSelectedItem].classList.add("active")
+    removeOtherBoxesActive()
+    /* Insert selected box on main carousel  */
     carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" class="mainImg" alt=""><div class="mainDescr"><h4>' + images[carouselSelectedItem].title + '</h4><h5>' + images[carouselSelectedItem].text + '</h5></div>'
-    if (carouselPause == false) {
-        clearInterval(carouselInterval)
-        carouselInterval = setInterval(carouselTimer, 3000)
-    }
+    /* Restart interval */
+    clearAndRestartInterval()
 }
 
+/* Right Arrow */
 document.getElementById("carouselArrowRight").onclick = function(){
-    prevItems[carouselSelectedItem].classList.remove("active")
+    /* deselect current box*/
+    prevBoxes[carouselSelectedItem].classList.remove("active")
+        /* condition for cycle from last to first*/
     if (carouselSelectedItem == 4) {
         carouselSelectedItem = 0
     }
     else {
         carouselSelectedItem += 1
     }
-    prevItems[carouselSelectedItem].classList.add("active")
-    for (let i = 0; i < prevBoxes.length && i != carouselSelectedItem; i++) {
-        prevBoxes[i].classList.remove("active")
-    }
+    /* select next box */
+    prevBoxes[carouselSelectedItem].classList.add("active")
+    removeOtherBoxesActive()
+    /* Insert selected box on main carousel  */
     carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" class="mainImg" alt=""><div class="mainDescr"><h4>' + images[carouselSelectedItem].title + '</h4><h5>' + images[carouselSelectedItem].text + '</h5></div>'
-    if (carouselPause == false) {
-        clearInterval(carouselInterval)
-        carouselInterval = setInterval(carouselTimer, 3000)
-    }
+    /* Restart interval */
+    clearAndRestartInterval()
 }
 
-
+/* Pause */
 document.getElementById("carouselPause").onclick = function(){
+    /* Set Pause var as True */
     carouselPause = true
+    /* Clear interval */
     clearInterval(carouselInterval)
+
+    /* Switch to Play Button */
     document.getElementById("carouselPause").classList.add("d-none")
     document.getElementById("carouselPlay").classList.remove("d-none")
 }
 
+/* Play */
 document.getElementById("carouselPlay").onclick = function(){
+    /* Set Pause var as False */
     carouselPause = false
+    /* Clear interval */
     carouselInterval = setInterval(carouselTimer, 3000)
+
+    /* Switch to Pause Button */
     document.getElementById("carouselPlay").classList.add("d-none")
     document.getElementById("carouselPause").classList.remove("d-none")
 }
 
-prevBoxes.forEach((box) => box.onclick = function(){
-    prevItems[carouselSelectedItem].classList.remove("active")
-    carouselSelectedItem = this.id
-    carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" class="mainImg" alt=""><div class="mainDescr"><h4>' + images[carouselSelectedItem].title + '</h4><h5>' + images[carouselSelectedItem].text + '</h5></div>'
-    prevItems[carouselSelectedItem].classList.add("active")
-        for (let i = 0; i < prevBoxes.length && i != carouselSelectedItem; i++) {
-            prevBoxes[i].classList.remove("active")
-        }
-        if (carouselPause == false) {
-            clearInterval(carouselInterval)
-            carouselInterval = setInterval(carouselTimer, 3000)
-        }
-    })
 
-function carouselTimer() {
-    if (carouselSelectedItem < (images.length - 1)){
-        carouselSelectedItem ++
-        prevItems[carouselSelectedItem].classList.add("active")
-        prevItems[carouselSelectedItem - 1].classList.remove("active")
-    }
-    else {
-        carouselSelectedItem = 0
-        prevBoxes[0].classList.add("active")
-        prevBoxes[4].classList.remove("active")
-    }
-    carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" class="mainImg" alt=""><div class="mainDescr"><h4>' + images[carouselSelectedItem].title + '</h4><h5>' + images[carouselSelectedItem].text + '</h5></div>'
-}
+
 
 
