@@ -50,6 +50,60 @@ carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" 
 prevItems[0].classList.add("active")
 
 let carouselInterval = setInterval(carouselTimer, 3000)
+let carouselPause = false
+
+document.getElementById("carouselArrowLeft").onclick = function(){
+    prevItems[carouselSelectedItem].classList.remove("active")
+    if (carouselSelectedItem == 0) {
+        carouselSelectedItem = 4
+    }
+    else {
+        carouselSelectedItem -= 1
+    }
+    prevItems[carouselSelectedItem].classList.add("active")
+    for (let i = 0; i < prevBoxes.length && i != carouselSelectedItem; i++) {
+        prevBoxes[i].classList.remove("active")
+    }
+    carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" class="mainImg" alt=""><div class="mainDescr"><h4>' + images[carouselSelectedItem].title + '</h4><h5>' + images[carouselSelectedItem].text + '</h5></div>'
+    if (carouselPause == false) {
+        clearInterval(carouselInterval)
+        carouselInterval = setInterval(carouselTimer, 3000)
+    }
+}
+
+document.getElementById("carouselArrowRight").onclick = function(){
+    prevItems[carouselSelectedItem].classList.remove("active")
+    if (carouselSelectedItem == 4) {
+        carouselSelectedItem = 0
+    }
+    else {
+        carouselSelectedItem += 1
+    }
+    prevItems[carouselSelectedItem].classList.add("active")
+    for (let i = 0; i < prevBoxes.length && i != carouselSelectedItem; i++) {
+        prevBoxes[i].classList.remove("active")
+    }
+    carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" class="mainImg" alt=""><div class="mainDescr"><h4>' + images[carouselSelectedItem].title + '</h4><h5>' + images[carouselSelectedItem].text + '</h5></div>'
+    if (carouselPause == false) {
+        clearInterval(carouselInterval)
+        carouselInterval = setInterval(carouselTimer, 3000)
+    }
+}
+
+
+document.getElementById("carouselPause").onclick = function(){
+    carouselPause = true
+    clearInterval(carouselInterval)
+    document.getElementById("carouselPause").classList.add("d-none")
+    document.getElementById("carouselPlay").classList.remove("d-none")
+}
+
+document.getElementById("carouselPlay").onclick = function(){
+    carouselPause = false
+    carouselInterval = setInterval(carouselTimer, 3000)
+    document.getElementById("carouselPlay").classList.add("d-none")
+    document.getElementById("carouselPause").classList.remove("d-none")
+}
 
 prevBoxes.forEach((box) => box.onclick = function(){
     prevItems[carouselSelectedItem].classList.remove("active")
@@ -59,9 +113,11 @@ prevBoxes.forEach((box) => box.onclick = function(){
         for (let i = 0; i < prevBoxes.length && i != carouselSelectedItem; i++) {
             prevBoxes[i].classList.remove("active")
         }
-    clearInterval(carouselInterval)
-    carouselInterval = setInterval(carouselTimer, 3000)
-})
+        if (carouselPause == false) {
+            clearInterval(carouselInterval)
+            carouselInterval = setInterval(carouselTimer, 3000)
+        }
+    })
 
 function carouselTimer() {
     if (carouselSelectedItem < (images.length - 1)){
@@ -71,6 +127,7 @@ function carouselTimer() {
     }
     else {
         carouselSelectedItem = 0
+        prevBoxes[0].classList.add("active")
         prevBoxes[4].classList.remove("active")
     }
     carouselMain.innerHTML = '<img src="' + images[carouselSelectedItem].image + '" class="mainImg" alt=""><div class="mainDescr"><h4>' + images[carouselSelectedItem].title + '</h4><h5>' + images[carouselSelectedItem].text + '</h5></div>'
